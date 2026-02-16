@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.VITE_API_URL || 'https://civiclens-2-0-1.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Create axios instance
 const api = axios.create({
@@ -77,3 +77,6 @@ export const adminAPI = {
     deleteUser: (id: string) => api.delete(`/admin/users/${id}`),
     getAuthorities: () => api.get('/admin/authorities'),
 };
+
+
+export default API_URL;
