@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://civiclens-2-0-1.onrender.com';
+const API_URL = process.env.VITE_API_URL || 'https://civiclens-2-0-1.onrender.com';
 
 // Create axios instance
 const api = axios.create({
