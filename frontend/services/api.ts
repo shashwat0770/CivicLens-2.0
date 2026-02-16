@@ -1,82 +1,124 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL;
+/*
+  Base URL:
+  Example:
+  https://civiclens-2-0-1.onrender.com/api
+*/
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+
+if (!import.meta.env.VITE_API_URL) {
+  console.error("VITE_API_URL is not defined");
+}
 
 // Create axios instance
 const api = axios.create({
-    baseURL: API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: false,
 });
 
-// Request interceptor to add token
+/* ===============================
+   Request Interceptor (Add Token)
+================================== */
 api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling
+/* ===============================
+   Response Interceptor
+================================== */
 api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            // Unauthorized - clear token and redirect to login
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            if (typeof window !== 'undefined') {
-                window.location.href = '/login';
-            }
-        }
-        return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     }
+
+    return Promise.reject(error);
+  }
 );
 
-export default api;
-
-// Auth API
+/* ===============================
+   Auth API
+================================== */
 export const authAPI = {
-    register: (data: any) => api.post('/auth/register', data),
-    login: (data: any) => api.post('/auth/login', data),
-    getMe: () => api.get('/auth/me'),
-    updateProfile: (data: any) => api.put('/auth/profile', data),
+  register: (data: unknown) => api.post("/auth/register", data),
+  login: (data: unknown) => api.post("/auth/login", data),
+  getMe: () => api.get("/auth/me"),
+  updateProfile: (data: unknown) => api.put("/auth/profile", data),
 };
 
-// Complaint API
+/* ===============================
+   Complaint API
+================================== */
 export const complaintAPI = {
-    create: (data: FormData) => api.post('/complaints', data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+  create: (data: FormData) =>
+    api.post("/complaints", data, {
+      headers: { "Content-Type": "multipart/form-data" },
     }),
-    getAll: (params?: any) => api.get('/complaints', { params }),
-    getById: (id: string) => api.get(`/complaints/${id}`),
-    update: (id: string, data: any) => api.put(`/complaints/${id}`, data),
-    delete: (id: string) => api.delete(`/complaints/${id}`),
-    assign: (id: string, authorityId: string) =>
-        api.post(`/complaints/${id}/assign`, { authorityId }),
-    addUpdate: (id: string, data: any) =>
-        api.post(`/complaints/${id}/update-progress`, data),
-    getForMap: (params?: any) => api.get('/complaints/map', { params }),
+
+  getAll: (params?: Record<string, unknown>) =>
+    api.get("/complaints", { params }),
+
+  getById: (id: string) =>
+    api.get(`/complaints/${id}`),
+
+  update: (id: string, data: unknown) =>
+    api.put(`/complaints/${id}`, data),
+
+  delete: (id: string) =>
+    api.delete(`/complaints/${id}`),
+
+  assign: (id: string, authorityId: string) =>
+    api.post(`/complaints/${id}/assign`, { authorityId }),
+
+  addUpdate: (id: string, data: unknown) =>
+    api.post(`/complaints/${id}/update-progress`, data),
+
+  getForMap: (params?: Record<string, unknown>) =>
+    api.get("/complaints/map", { params }),
 };
 
-// Admin API
+/* ===============================
+   Admin API
+================================== */
 export const adminAPI = {
-    getDashboard: () => api.get('/admin/dashboard'),
-    getUsers: (params?: any) => api.get('/admin/users', { params }),
-    updateUserRole: (id: string, role: string) =>
-        api.put(`/admin/users/${id}/role`, { role }),
-    toggleUserStatus: (id: string) =>
-        api.put(`/admin/users/${id}/toggle-status`),
-    deleteUser: (id: string) => api.delete(`/admin/users/${id}`),
-    getAuthorities: () => api.get('/admin/authorities'),
+  getDashboard: () => api.get("/admin/dashboard"),
+
+  getUsers: (params?: Record<string, unknown>) =>
+    api.get("/admin/users", { params }),
+
+  updateUserRole: (id: string, role: string) =>
+    api.put(`/admin/users/${id}/role`, { role }),
+
+  toggleUserStatus: (id: string) =>
+    api.put(`/admin/users/${id}/toggle-status`),
+
+  deleteUser: (id: string) =>
+    api.delete(`/admin/users/${id}`),
+
+  getAuthorities: () =>
+    api.get("/admin/authorities"),
 };
 
-
-export default API_URL;
+/* ===============================
+   Export axios instance
+================================== */
+export default api;
