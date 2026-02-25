@@ -16,7 +16,6 @@ Complete guide for deploying CivicLens to production.
 ## Pre-Deployment Checklist
 
 ### ✅ Before You Deploy
-
 - [ ] MongoDB Atlas cluster is created and accessible
 - [ ] Google Maps API key is obtained and configured
 - [ ] All environment variables are documented
