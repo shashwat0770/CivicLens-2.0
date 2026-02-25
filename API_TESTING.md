@@ -1,6 +1,6 @@
 # 🧪 CivicLens API Testing Guide
 
-Quick reference for testing all API endpoints using PowerShell or curl. 
+Quick reference for testing all API endpoints using PowerShell or curl.  
 
 ## 🔧 Setup
 
